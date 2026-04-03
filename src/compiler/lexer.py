@@ -3,13 +3,8 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Iterator, List
 
-try:
-    from gurudev.exceptions import LexerError
-except ImportError:
-    # Fallback caso o pacote ainda não esteja instalado
-    class LexerError(Exception):
-        def __init__(self, char, line, column, **kwargs):
-            super().__init__(f"Caractere inesperado '{char}' na linha {line}, coluna {column}")
+from gurudev.exceptions import LexerError
+
 
 class TokenType(Enum):
     # Literais
