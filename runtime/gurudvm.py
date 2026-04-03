@@ -305,3 +305,12 @@ class GuruDVM:
             "alvo": alvo,
             "dados": dados,
         })
+
+    def _verificar_mvp(self) -> bool:
+        """
+        Verifica se a execução atual produziu outputs computacionalmente distintos.
+        Critério: pelo menos 2 modos hermenêuticos diferentes registrados em operações DISPLAY.
+        """
+        modos = {o["dados"].get("modo") for o in self.saida 
+                 if o["opcode"] == "DISPLAY" and "modo" in o["dados"]}
+        return len(modos) >= 2

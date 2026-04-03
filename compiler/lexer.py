@@ -85,6 +85,7 @@ class Lexer:
         'default': TokenType.DEFAULT,
         'load': TokenType.LOAD,
         'display': TokenType.DISPLAY,
+        'mostre': TokenType.DISPLAY,  # Alias PT para display
         'evaluate': TokenType.EVALUATE,
         'transcode': TokenType.TRANSCODE,
         'emote': TokenType.EMOTE,
@@ -143,11 +144,16 @@ class Lexer:
                 self.avancar()
 
     def pular_whitespace(self) -> None:
-        """Pula todos os caracteres de espaço, incluindo comentários."""
+        """Pula todos os caracteres de espaço, incluindo comentários (# e //)."""
         while True:
             self.pular_espacos()
             if self.atual == '#':
                 self.pular_comentario()
+            elif self.atual == '/' and self.proximo == '/':
+                self.avancar() # /
+                self.avancar() # /
+                while self.atual not in ('\n', '\0'):
+                    self.avancar()
             else:
                 break
 

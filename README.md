@@ -16,23 +16,31 @@ pip install pytest
 
 ## Execução rápida (CLI v0.2)
 
-A nova CLI utiliza `click` e `rich` para uma experiência superior.
+A nova CLI utiliza `click` e `rich` para uma experiência visual e funcional superior.
+
+```text
+╔══════════════════════════════════════════════════════════╗
+║ GuruDev® v0.2 · Semantic Programming Language ║
+╚══════════════════════════════════════════════════════════╝
+```
+
+### Comandos Principais
 
 ```bash
 # Instalar em modo editável
 pip install -e .
 
-# Executar nível 1 (LITERAL)
-python gurudev/cli.py run examples/mvp_demo.guru --hermeneutica 1
-
-# Executar nível 4 (CONTEXTUAL)
+# Executar código diretamente (Nível 4 - CONTEXTUAL)
 python gurudev/cli.py run examples/mvp_demo.guru --hermeneutica 4
 
-# Executar modo Demo (todos os 7 níveis)
+# Executar modo Demo (todos os 7 níveis hermenêuticos)
 python gurudev/cli.py run examples/mvp_demo.guru --demo
 
-# Inspecionar bytecode gerado
-python gurudev/cli.py inspect examples/mvp_demo.guru
+# Compilar para bytecode (.gurub)
+python gurudev/cli.py build examples/mvp_demo.guru
+
+# Inspecionar o bytecode gerado
+python gurudev/cli.py compile examples/mvp_demo.guru
 ```
 
 ## Testes
