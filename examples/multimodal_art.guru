@@ -1,0 +1,20 @@
+# GuruDev® — Multimodal Art
+# Demonstra o dispatch hermenêutico em contexto artístico (clave = arte)
+
+bind clave = arte
+load nota_musical
+
+dispatch hermeneutica nota_musical {
+    case 1:
+        display in context
+    case 3:
+        evaluate nota_musical
+    case 4:
+        display in context
+    case 6:
+        display in context
+    case 7:
+        display in context
+    default:
+        display in context
+}
