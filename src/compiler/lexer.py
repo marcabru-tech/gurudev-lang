@@ -1,8 +1,7 @@
 """GuruDev Lexer v0.2 - Análise léxica robusta com recuperação de erros."""
-import re
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import List, Optional, Iterator
+from typing import Iterator, List
 
 try:
     from gurudev.exceptions import LexerError
@@ -17,7 +16,7 @@ class TokenType(Enum):
     NUMBER = auto()
     STRING = auto()
     IDENTIFIER = auto()
-    
+
     # Keywords
     DEF = auto()
     TAG = auto()
@@ -35,11 +34,11 @@ class TokenType(Enum):
     EMOTE = auto()
     IN = auto()
     CONTEXT = auto()
-    
+
     # Operadores
     ASSIGN = auto()
     ARROW = auto()
-    
+
     # Delimitadores
     LPAREN = auto()
     RPAREN = auto()
@@ -50,7 +49,7 @@ class TokenType(Enum):
     COLON = auto()
     COMMA = auto()
     SEMICOLON = auto()
-    
+
     # Especiais
     NEWLINE = auto()
     EOF = auto()
@@ -162,7 +161,7 @@ class Lexer:
             if self.atual == '.':
                 tem_ponto = True
             numero += self.avancar()
-        
+
         # Validação: não pode terminar com ponto
         if numero.endswith('.'):
             self.erros.append(LexerError(
@@ -185,7 +184,7 @@ class Lexer:
                 conteudo += self.ESCAPES.get(escape_char, escape_char)
             else:
                 conteudo += self.avancar()
-        
+
         if self.atual != '"':
             raise LexerError(
                 char='\0',
@@ -211,10 +210,10 @@ class Lexer:
             self.pular_whitespace()
             if self.pos >= len(self.codigo):
                 break
-            
+
             ch = self.atual
             linha, coluna = self.linha, self.coluna
-            
+
             # Nova linha
             if ch == '\n':
                 self.tokens.append(Token(TokenType.NEWLINE, '\n', linha, coluna))
@@ -271,10 +270,10 @@ class Lexer:
                     column=coluna
                 ))
                 self.avancar()
-        
+
         # Token EOF
         self.tokens.append(Token(TokenType.EOF, 'EOF', self.linha, self.coluna))
-        
+
         # Se houver erros, levanta o primeiro
         if self.erros:
             raise self.erros[0]

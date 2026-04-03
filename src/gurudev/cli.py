@@ -1,22 +1,19 @@
 """GuruDev CLI v0.2 - Interface moderna com Click e Rich."""
 import json
-import sys
 from pathlib import Path
-from typing import Optional
+
 import click
 from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
-from rich.table import Table
-from rich.tree import Tree
 
+from compiler.bytecode_gen import BytecodeGenerator
+from compiler.context_analyzer import ContextAnalyzer
 from compiler.lexer import Lexer
 from compiler.parser import Parser
-from compiler.context_analyzer import ContextAnalyzer
-from compiler.bytecode_gen import BytecodeGenerator
-from runtime.gurudvm import GuruDVM
-from gurumatrix.core import GuruMatrix
 from gurudev.exceptions import GuruDevError
+from gurumatrix.core import GuruMatrix
+from runtime.gurudvm import GuruDVM
 
 console = Console()
 
@@ -48,19 +45,19 @@ def executar(gurubyte: dict, hermeneutica: int, recursos: dict) -> tuple:
     if "CONTEXT_DEFAULT" not in gurubyte:
         gurubyte["CONTEXT_DEFAULT"] = {}
     gurubyte["CONTEXT_DEFAULT"]["hermeneutics"] = hermeneutica
-    
+
     for bloco in gurubyte.get("CODEBLOCKS", []):
         if "CONTEXT" not in bloco:
             bloco["CONTEXT"] = {}
         bloco["CONTEXT"]["hermeneutics"] = hermeneutica
-        
+
     matrix = GuruMatrix()
     matrix.popular_minimo()
     dvm = GuruDVM(matrix)
-    
+
     for k, v in recursos.items():
         dvm.carregar_recurso(k, v)
-        
+
     resultados = dvm.executar(gurubyte)
     status_mvp = dvm._verificar_mvp()
     return resultados, status_mvp
@@ -79,7 +76,7 @@ def compile(arquivo, output):
     try:
         codigo = Path(arquivo).read_text()
         gurubyte, _ = compilar(codigo, arquivo)
-        
+
         if output:
             with open(output, 'w') as f:
                 json.dump(gurubyte, f, indent=4)
@@ -87,7 +84,7 @@ def compile(arquivo, output):
         else:
             console.print(Panel("[bold blue]Bytecode Gerado[/bold blue]"))
             console.print_json(data=gurubyte)
-            
+
     except GuruDevError as e:
         console.print(f"[bold red]Erro de Compilação:[/bold red] {e}")
 
@@ -98,10 +95,10 @@ def compile(arquivo, output):
 def run(arquivo, hermeneutica, demo):
     """Executa um arquivo .guru diretamente."""
     console.print(BANNER)
-    
+
     try:
         codigo = Path(arquivo).read_text()
-        
+
         if demo:
             for h in range(1, 8):
                 console.print(Panel(f"[bold green]Executando Nível {h}[/bold green]"))
@@ -118,7 +115,7 @@ def run(arquivo, hermeneutica, demo):
                 console.print(res)
             if status_mvp:
                 console.print("[dim italic]✓ MVP Semântico Verificado: outputs distintos detectados.[/dim italic]")
-                
+
     except GuruDevError as e:
         console.print(f"[bold red]Erro:[/bold red] {e}")
     except Exception as e:

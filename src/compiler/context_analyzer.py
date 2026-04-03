@@ -4,11 +4,17 @@ Percorre a GuruAST e propaga contexto semântico
 (clave, hermeneutica, ontologia) para cada nó.
 Modo: Declarativo (anotações explícitas do programador).
 """
-from dataclasses import dataclass, field
-from typing import List, Optional, Dict, Any
+from dataclasses import dataclass
+from typing import Dict, List
+
 from compiler.parser import (
-    NoAST, Programa, TagHermeneutica, BindClave,
-    Instrucao, DispatchHermeneutica, FuncaoDecl, Literal, Identificador
+    BindClave,
+    DispatchHermeneutica,
+    FuncaoDecl,
+    Instrucao,
+    NoAST,
+    Programa,
+    TagHermeneutica,
 )
 
 CLAVE_PARA_ONTOLOGIA: Dict[str, str] = {
@@ -71,7 +77,6 @@ class ContextAnalyzer:
 
             # Dry-run: verifica se anotações têm despacho associado
             if no.opcode in ("DISPLAY", "EVALUATE", "LOAD"):
-                tem_dispatch = False  # será verificado pelo bytecode gen
                 self.dry_run_report.append({
                     "opcode": no.opcode,
                     "hermeneutica": ctx.hermeneutica,

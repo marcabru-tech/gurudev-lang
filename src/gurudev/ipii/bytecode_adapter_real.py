@@ -12,7 +12,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 # ── Canonical data-classes (plain dicts with typed constructors) ─────────────
 
 

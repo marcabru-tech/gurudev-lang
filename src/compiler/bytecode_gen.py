@@ -2,14 +2,20 @@
 GuruDev Bytecode Generator v0.1-MVP
 GuruAST → GuruByte (representação dict, serializável em JSON)
 """
-import json
 import hashlib
-from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
+import json
+from typing import Any, Optional
+
 from compiler.parser import (
-    NoAST, Programa, TagHermeneutica, BindClave,
-    Instrucao, DispatchHermeneutica, FuncaoDecl, Literal, Identificador
+    BindClave,
+    DispatchHermeneutica,
+    FuncaoDecl,
+    Instrucao,
+    NoAST,
+    Programa,
+    TagHermeneutica,
 )
+
 
 class BytecodeGenerator:
     def __init__(self, versao: str = "0.1.0"):

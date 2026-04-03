@@ -3,8 +3,9 @@ GuruMatrix v0.1-MVP
 Espaço de coordenadas semânticas 10x10
 """
 from dataclasses import dataclass, field
-from typing import List, Optional, Dict, Any
-from enum import Enum, auto
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
 
 class Ontologia(Enum):
     SUBSTANCIA = 1
