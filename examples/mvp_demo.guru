@@ -1,0 +1,10 @@
+# GuruDev MVP Demo
+bind clave = ciencia
+load formula_energia
+dispatch hermeneutica formula_energia {
+    case 1: display in context
+    case 3: evaluate formula_energia
+    case 4: display in context
+    case 7: display in context
+    default: display in context
+}
