@@ -1,7 +1,3 @@
-import sys
-from pathlib import Path
-sys.path.append(str(Path(__file__).parent.parent))
-
 from gurumatrix.core import GuruMatrix, Dominio
 
 def test_matrix_density():

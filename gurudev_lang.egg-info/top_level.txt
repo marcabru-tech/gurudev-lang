@@ -1,4 +1,0 @@
-compiler
-gurudev
-gurumatrix
-runtime
