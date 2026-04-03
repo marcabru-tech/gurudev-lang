@@ -8,68 +8,99 @@ provar que `DISPATCH_ON_HERMENEUTICS` produz outputs computacionalmente distinto
 A especificação técnica fundacional da linguagem pode ser encontrada em:
 - [Especificação Fundacional v0.2](docs/especificacao-fundacional-v0.2.md)
 
+## Estado do Projeto
+
+| Componente | Status |
+|---|---|
+| Lexer | ✅ |
+| Parser | ✅ |
+| GuruMatrix | ⚠️ 33% densidade |
+| Runtime DVM | ✅ |
+| CLI (argparse) | ✅ |
+| CLI (click/rich) | ⚠️ requer `click` e `rich` instalados |
+| IPII Transpiler | 🧪 experimental |
+| CI/CD | ✅ (Python 3.9–3.12) |
+| Turing-completude | ❌ planejado |
+
 ## Instalação
 
 ```bash
-pip install pytest
+# Instalar em modo editável com dependências de desenvolvimento
+pip install -e ".[dev]"
 ```
 
-## Execução rápida (CLI v0.2)
+## Execução
 
-A nova CLI utiliza `click` e `rich` para uma experiência visual e funcional superior.
-
-```text
-╔══════════════════════════════════════════════════════════╗
-║ GuruDev® v0.2 · Semantic Programming Language ║
-╚══════════════════════════════════════════════════════════╝
-```
-
-### Comandos Principais
+### CLI legado (argparse — sem dependências extras)
 
 ```bash
-# Instalar em modo editável
-pip install -e .
+# Executar com nível hermenêutico específico
+PYTHONPATH=src python3 gurudev-cli.py examples/mvp_demo.guru --hermeneutica 1
+PYTHONPATH=src python3 gurudev-cli.py examples/mvp_demo.guru --hermeneutica 7
 
-# Executar código diretamente (Nível 4 - CONTEXTUAL)
-python gurudev/cli.py run examples/mvp_demo.guru --hermeneutica 4
+# Modo demo — executa todos os 7 níveis hermenêuticos
+PYTHONPATH=src python3 gurudev-cli.py examples/mvp_demo.guru --demo
 
-# Executar modo Demo (todos os 7 níveis hermenêuticos)
-python gurudev/cli.py run examples/mvp_demo.guru --demo
+# Inspecionar bytecode gerado
+PYTHONPATH=src python3 gurudev-cli.py examples/mvp_demo.guru --gurubyte
+```
+
+### CLI moderna (click + rich — após `pip install -e .`)
+
+```bash
+# Executar com nível específico
+gurudev run examples/mvp_demo.guru --hermeneutica 4
+
+# Modo demo (7 níveis)
+gurudev run examples/mvp_demo.guru --demo
 
 # Compilar para bytecode (.gurub)
-python gurudev/cli.py build examples/mvp_demo.guru
+gurudev compile examples/mvp_demo.guru
 
-# Inspecionar o bytecode gerado
-python gurudev/cli.py compile examples/mvp_demo.guru
+# Transpilar para Python via IPII
+gurudev export examples/mvp_demo.guru
 ```
 
 ## Testes
 
 ```bash
-python -m pytest tests/ -v
+# Executar todos os testes (requer pip install -e ".[dev]")
+PYTHONPATH=src python -m pytest tests/ -v
+
+# Ou simplesmente (pythonpath configurado em pyproject.toml)
+pytest
 ```
 
 ## Estrutura do Repositório
 
 ```
-gurudev-repo/
+gurudev-lang/
 ├── docs/
 │   └── especificacao-fundacional-v0.2.md  # Whitepaper v0.2
-├── gurumatrix/core.py       # Espaço semântico 10x10 (Aristóteles × Domínios)
-├── compiler/
-│   ├── lexer.py             # .guru → tokens
-│   ├── parser.py            # tokens → GuruAST
-│   ├── context_analyzer.py  # propagação de contexto semântico
-│   └── bytecode_gen.py      # GuruAST → GuruByte (dict)
-├── runtime/gurudvm.py       # Execução bicameral + DISPATCH_ON_HERMENEUTICS
-├── tests/test_mvp.py        # Suite completa de testes
-├── examples/mvp_demo.guru   # Programa de demonstração
-├── gurudev/                 # Novo pacote de infraestrutura
-│   ├── cli.py               # Nova CLI v0.2 (Click + Rich)
-│   ├── exceptions.py        # Sistema de exceções customizadas
-│   └── logger.py            # Sistema de logging estruturado
-├── pyproject.toml           # Configuração moderna de projeto
-└── requirements.txt         # Dependências (atualizado)
+├── examples/
+│   └── mvp_demo.guru                      # Programa de demonstração
+├── src/
+│   ├── compiler/
+│   │   ├── lexer.py             # .guru → tokens
+│   │   ├── parser.py            # tokens → GuruAST
+│   │   ├── context_analyzer.py  # propagação de contexto semântico
+│   │   └── bytecode_gen.py      # GuruAST → GuruByte (dict)
+│   ├── gurumatrix/
+│   │   ├── core.py              # Espaço semântico 10x10 (Aristóteles × Domínios)
+│   │   └── cells.py             # Definição de células semânticas
+│   ├── runtime/
+│   │   └── gurudvm.py           # Execução bicameral + DISPATCH_ON_HERMENEUTICS
+│   ├── gurudev/
+│   │   ├── cli.py               # CLI v0.2 (Click + Rich)
+│   │   ├── exceptions.py        # Sistema de exceções customizadas
+│   │   ├── logger.py            # Sistema de logging estruturado
+│   │   └── ipii/                # Transpilador IPII → Python
+│   └── cli/
+│       └── gurudev_cli.py       # CLI entry point (click)
+├── tests/                       # Suíte completa de testes (119+ casos)
+├── gurudev-cli.py               # CLI legado (argparse, sem deps extras)
+├── pyproject.toml               # Configuração moderna de projeto
+└── requirements.txt             # Dependências
 ```
 
 ## O MVP Semântico

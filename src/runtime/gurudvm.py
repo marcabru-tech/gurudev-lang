@@ -219,7 +219,7 @@ class GuruDVM:
         try:
             celula = self.matrix.get(coord[0], coord[1])
             return [r.value for r in celula.relacoes_ativas]
-        except Exception:
+        except (KeyError, AttributeError, TypeError):
             return []
 
     def _encontrar_analogias(self, nome: str, clave: str) -> List[dict]:
@@ -235,7 +235,7 @@ class GuruDVM:
                         "objetos_analogos": celula.objetos[:3],
                         "relacao": "HOMOLOGIA",
                     })
-            except Exception:
+            except (KeyError, AttributeError, TypeError):
                 pass
         return analogias[:4]  # limita para legibilidade
 
