@@ -1,0 +1,414 @@
+{
+    "SUBSTANCIA_ARTE": {
+        "objetos": [
+            "pintura",
+            "escultura",
+            "instrumento musical"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "SUBSTANCIA_FILOSOFIA": {
+        "objetos": [
+            "substância enquanto essência",
+            "substrato",
+            "acidente",
+            "substância primeira",
+            "substância segunda"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "SUBSTANCIA_TECNOLOGIA": {
+        "objetos": [
+            "hardware",
+            "software",
+            "circuito integrado",
+            "dispositivo eletrônico",
+            "sensor"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "QUANTIDADE_ARTE": {
+        "objetos": [
+            "escala",
+            "proporção",
+            "quantidade de cores",
+            "frequência de elementos",
+            "densidade visual"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "QUANTIDADE_FILOSOFIA": {
+        "objetos": [
+            "infinito",
+            "medida",
+            "proporção",
+            "unidade",
+            "magnitude"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "QUANTIDADE_TECNOLOGIA": {
+        "objetos": [
+            "bits",
+            "bytes",
+            "frequência de clock",
+            "largura de banda",
+            "resolução"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "QUALIDADE_ARTE": {
+        "objetos": [
+            "cor",
+            "textura",
+            "expressividade",
+            "harmonia",
+            "intensidade"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "QUALIDADE_FILOSOFIA": {
+        "objetos": [
+            "verdade",
+            "beleza",
+            "bondade",
+            "sabedoria",
+            "justiça"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "QUALIDADE_TECNOLOGIA": {
+        "objetos": [
+            "eficiência",
+            "usabilidade",
+            "confiabilidade",
+            "desempenho",
+            "segurança"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "RELACAO_ARTE": {
+        "objetos": [
+            "composição",
+            "intertextualidade",
+            "contraste",
+            "correspondência",
+            "influência"
+        ],
+        "relacoes": [
+            "similitude"
+        ],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "RELACAO_FILOSOFIA": {
+        "objetos": [
+            "causa e efeito",
+            "correlação",
+            "contradição",
+            "analogia",
+            "dependência"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "RELACAO_TECNOLOGIA": {
+        "objetos": [
+            "interface usuário-sistema",
+            "protocolos de comunicação",
+            "integração de sistemas",
+            "conectividade de dispositivos",
+            "fluxo de dados"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "LUGAR_ARTE": {
+        "objetos": [
+            "museu",
+            "galeria de arte",
+            "teatro",
+            "atelier",
+            "rua artística"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "LUGAR_FILOSOFIA": {
+        "objetos": [
+            "espaço físico",
+            "contexto existencial",
+            "locus de experiência",
+            "ambiente fenomenológico",
+            "ambiente social"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "LUGAR_TECNOLOGIA": {
+        "objetos": [
+            "plataforma digital",
+            "data center",
+            "rede de comunicação",
+            "interface de usuário",
+            "ambiente virtual"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "TEMPO_ARTE": {
+        "objetos": [
+            "duração da obra",
+            "tempo histórico da arte",
+            "temporalidade na narrativa",
+            "tempo de execução",
+            "ritmo artístico"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "TEMPO_FILOSOFIA": {
+        "objetos": [
+            "tempo linear",
+            "tempo cíclico",
+            "tempo psicológico"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "TEMPO_TECNOLOGIA": {
+        "objetos": [
+            "cronômetro",
+            "processador",
+            "sincronização",
+            "latência",
+            "tempo de resposta"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "SITUACAO_ARTE": {
+        "objetos": [
+            "performance artística",
+            "contexto expositivo",
+            "interação do público"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "SITUACAO_FILOSOFIA": {
+        "objetos": [
+            "dilema moral",
+            "situação existencial",
+            "paradoxo",
+            "contexto histórico",
+            "condição humana"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "SITUACAO_TECNOLOGIA": {
+        "objetos": [
+            "contexto operacional",
+            "estado do sistema",
+            "condição de rede",
+            "modo de uso",
+            "configuração ambiental"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "CONDICAO_ARTE": {
+        "objetos": [
+            "estado emocional do artista",
+            "contexto histórico da obra",
+            "condição física do ambiente de criação"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "CONDICAO_FILOSOFIA": {
+        "objetos": [
+            "estado de consciência",
+            "moralidade",
+            "liberdade",
+            "necessidade",
+            "possibilidade"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "CONDICAO_TECNOLOGIA": {
+        "objetos": [
+            "estado_operacional",
+            "pré_requisito_sistema",
+            "configuração_de_firmware",
+            "condição_de_software",
+            "parâmetro_de_tolerância"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "ACAO_ARTE": {
+        "objetos": [
+            "criar",
+            "interpretar",
+            "expressar"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "ACAO_FILOSOFIA": {
+        "objetos": [
+            "ação intencional",
+            "ação moral",
+            "ação livre",
+            "ação ética",
+            "ação consequencial"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "ACAO_TECNOLOGIA": {
+        "objetos": [
+            "programar",
+            "automatizar",
+            "ferrar",
+            "monitorar",
+            "otimizar"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "PAIXAO_ARTE": {
+        "objetos": [
+            "inspiração",
+            "expressão emocional",
+            "criatividade intensa",
+            "entusiasmo artístico",
+            "transcendência estética"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "PAIXAO_FILOSOFIA": {
+        "objetos": [
+            "amor",
+            "ódio",
+            "desejo",
+            "raiva",
+            "compaixão"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    },
+    "PAIXAO_TECNOLOGIA": {
+        "objetos": [
+            "entusiasmo pelo desenvolvimento tecnológico",
+            "engajamento emocional com inovação",
+            "paixão por programação",
+            "motivação intrínseca para resolver problemas técnicos",
+            "dedicação intensa a projetos tecnológicos"
+        ],
+        "relacoes": [],
+        "instrucoes": [
+            "DISPLAY",
+            "EVALUATE"
+        ]
+    }
+}

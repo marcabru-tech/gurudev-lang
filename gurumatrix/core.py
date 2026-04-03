@@ -68,6 +68,41 @@ class GuruMatrix:
         for x in Ontologia:
             for y in Dominio:
                 self.celulas[(x.value, y.value)] = CelulaGuruMatrix(x, y)
+        self._carregar_dados_v02()
+
+    def _carregar_dados_v02(self):
+        import json
+        from pathlib import Path
+        
+        # Carregar objetos e relações
+        data_path = Path(__file__).parent / "data_v0.2.json"
+        if data_path.exists():
+            with open(data_path, "r") as f:
+                dados = json.load(f)
+                for chave, info in dados.items():
+                    try:
+                        ont_name, dom_name = chave.split("_")
+                        celula = self.get_by_name(ont_name, dom_name)
+                        if celula:
+                            celula.objetos = info.get("objetos", [])
+                            celula.relacoes_ativas = [RelacaoSemantica(r) for r in info.get("relacoes", [])]
+                            celula.instrucoes_preferenciais = info.get("instrucoes", [])
+                    except Exception:
+                        continue
+        
+        # Carregar embeddings
+        emb_path = Path(__file__).parent / "embeddings_v0.2.json"
+        if emb_path.exists():
+            with open(emb_path, "r") as f:
+                embs = json.load(f)
+                for nome_celula, vetor in embs.items():
+                    try:
+                        ont_name, dom_name = nome_celula.split("_")
+                        celula = self.get_by_name(ont_name, dom_name)
+                        if celula:
+                            celula.embedding = vetor
+                    except Exception:
+                        continue
 
     def get(self, x: Ontologia, y: Dominio) -> CelulaGuruMatrix:
         return self.celulas[(x.value, y.value)]
@@ -79,6 +114,36 @@ class GuruMatrix:
             return self.get(x, y)
         except KeyError:
             return None
+
+    def buscar_homologos(self, ont: Ontologia, dom_origem: Dominio) -> List[Dict[str, Any]]:
+        """Busca objetos na mesma categoria ontológica em outros domínios."""
+        homologos = []
+        for dom in Dominio:
+            if dom == dom_origem:
+                continue
+            celula = self.get(ont, dom)
+            if celula.objetos:
+                homologos.append({
+                    "dominio": dom.name,
+                    "objetos": celula.objetos,
+                    "relacao": RelacaoSemantica.HOMOLOGIA.value
+                })
+        return homologos
+
+    def buscar_similitudes(self, dom: Dominio, ont_origem: Ontologia) -> List[Dict[str, Any]]:
+        """Busca objetos no mesmo domínio em outras categorias ontológicas."""
+        similitudes = []
+        for ont in Ontologia:
+            if ont == ont_origem:
+                continue
+            celula = self.get(ont, dom)
+            if celula.objetos:
+                similitudes.append({
+                    "ontologia": ont.name,
+                    "objetos": celula.objetos,
+                    "relacao": RelacaoSemantica.SIMILITUDE.value
+                })
+        return similitudes
 
     def popular_minimo(self):
         c = self.get(Ontologia.ACAO, Dominio.CIENCIA)
