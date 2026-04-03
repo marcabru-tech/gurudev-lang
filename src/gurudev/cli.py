@@ -132,5 +132,49 @@ def build(arquivo):
     ctx = click.get_current_context()
     ctx.invoke(compile, arquivo=arquivo, output=output)
 
+@main.command()
+@click.argument('arquivo', type=click.Path(exists=True))
+@click.option('--output', '-o', default=None, help='Arquivo de saída Python (.py); padrão: stdout')
+def export(arquivo, output):
+    """Transpila um arquivo .guru ou .gurub para Python via pipeline IPII."""
+    from gurudev.ipii import BytecodeAdapterReal, IntentAnalyzer, IPIIEngine
+
+    console.print(BANNER)
+    try:
+        caminho = Path(arquivo)
+        sufixo = caminho.suffix.lower()
+
+        if sufixo == '.guru':
+            codigo = caminho.read_text()
+            gurubyte, _ = compilar(codigo, arquivo)
+        elif sufixo == '.gurub':
+            with open(arquivo, 'r') as f:
+                gurubyte = json.load(f)
+        else:
+            console.print(f"[bold red]Erro:[/bold red] Extensão não suportada '{sufixo}'. Use .guru ou .gurub.")
+            raise SystemExit(1)
+
+        adapted = BytecodeAdapterReal().adapt(gurubyte)
+        intent = IntentAnalyzer().analyze(adapted)
+        py_source = IPIIEngine().generate(adapted, intent)
+
+        if output:
+            Path(output).write_text(py_source)
+            console.print(
+                f"[bold green]Sucesso![/bold green] Python exportado para: {output}\n"
+                f"[dim]Intent: {intent.name} {intent.tags} herm={intent.hermeneutics}[/dim]"
+            )
+        else:
+            console.print(Panel("[bold blue]Python Gerado (IPII)[/bold blue]"))
+            console.print(Syntax(py_source, "python", theme="monokai", line_numbers=True))
+
+    except GuruDevError as e:
+        console.print(f"[bold red]Erro de Compilação:[/bold red] {e}")
+        raise SystemExit(1)
+    except Exception as e:
+        console.print(f"[bold red]Erro inesperado:[/bold red] {e}")
+        raise SystemExit(1)
+
+
 if __name__ == "__main__":
     main()
