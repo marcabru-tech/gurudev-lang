@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# GuruDev artifacts
+*.gurub
+.gurudev/
+
+# Testing
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Type checking
+.mypy_cache/
+
+# Linting
+.ruff_cache/
+
+# IDE / editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+
+# Distribution / packaging
+MANIFEST
+*.tar.gz
+*.whl
+
+# Documentation
+docs/_build/
+site/
+
+# Logs
+*.log

@@ -1,8 +1,4 @@
 
-import sys
-from pathlib import Path
-sys.path.append(str(Path(__file__).parent.parent))
-
 from compiler.lexer import Lexer, TokenType
 
 def test_lexer_alias_mostre():

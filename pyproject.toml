@@ -1,21 +1,20 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "gurudev-lang"
 version = "0.1.0"
 description = "Linguagem de programação semântica com dispatch hermenêutico"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "Hubstry-GuruDev License v1.0"}
 authors = [
-    {name = "Guilherme Gonçalves Machado", email = "guilherme@example.com"}
+    {name = "Guilherme Gonçalves Machado", email = "guilherme@hubstry.com"}
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -24,10 +23,9 @@ classifiers = [
     "Topic :: Software Development :: Compilers",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
-keywords = ["language", "compiler", "semantic", "hermeneutics"]
+keywords = ["language", "compiler", "semantic", "hermeneutics", "gurudev"]
 requires-python = ">=3.9"
 dependencies = [
-    "pytest>=7.0",
     "click>=8.0",
     "pydantic>=2.0",
     "rich>=13.0",
@@ -35,8 +33,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "pytest>=7.0",
     "pytest-cov>=4.0",
-    "pytest-xdist>=3.0",
     "black>=23.0",
     "isort>=5.0",
     "mypy>=1.0",
@@ -49,6 +47,7 @@ docs = [
 
 [project.scripts]
 gurudev = "gurudev.cli:main"
+gurudev-cli = "cli.gurudev_cli:main"
 
 [project.urls]
 Homepage = "https://github.com/marcabru-tech/gurudev-lang"
@@ -56,13 +55,29 @@ Documentation = "https://github.com/marcabru-tech/gurudev-lang/docs"
 Repository = "https://github.com/marcabru-tech/gurudev-lang"
 Issues = "https://github.com/marcabru-tech/gurudev-lang/issues"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["compiler*", "runtime*", "gurumatrix*", "gurudev*"]
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/gurumatrix",
+    "src/compiler",
+    "src/runtime",
+    "src/gurudev",
+    "src/cli",
+]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "tests/",
+    "examples/",
+    "docs/",
+    "README.md",
+    "LICENSE.md",
+    "pyproject.toml",
+]
 
 [tool.black]
 line-length = 100
-target-version = ['py39', 'py310', 'py311', 'py312']
+target-version = ["py39", "py310", "py311", "py312"]
 
 [tool.isort]
 profile = "black"
@@ -82,3 +97,4 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --tb=short"
+pythonpath = ["src"]

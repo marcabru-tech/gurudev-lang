@@ -1,0 +1,19 @@
+# GuruDev® — Hello, Science!
+# Demonstra DISPLAY e EVALUATE em contexto científico
+
+bind clave = ciencia
+tag hermeneutica = 4
+
+load formula_euler
+
+dispatch hermeneutica formula_euler {
+    case 1:
+        display in context
+    case 4:
+        display in context
+        evaluate formula_euler
+    case 7:
+        display in context
+    default:
+        display in context
+}

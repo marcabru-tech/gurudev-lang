@@ -3,9 +3,6 @@ GuruDev MVP Tests
 Prova do caso zero: DISPATCH_ON_HERMENEUTICS produz outputs computacionalmente distintos.
 Execute: python -m pytest tests/ -v  (a partir de gurudev-mvp/)
 """
-import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
 import pytest
 from gurumatrix.core import GuruMatrix
 from compiler.lexer import Lexer
