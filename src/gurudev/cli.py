@@ -10,9 +10,6 @@ from rich.syntax import Syntax
 from rich.table import Table
 from rich.tree import Tree
 
-# Ajuste de path para imports internos
-sys.path.append(str(Path(__file__).parent.parent))
-
 from compiler.lexer import Lexer
 from compiler.parser import Parser
 from compiler.context_analyzer import ContextAnalyzer
