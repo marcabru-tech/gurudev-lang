@@ -14,26 +14,25 @@ A especificação técnica fundacional da linguagem pode ser encontrada em:
 pip install pytest
 ```
 
-## Execução rápida
+## Execução rápida (CLI v0.2)
+
+A nova CLI utiliza `click` e `rich` para uma experiência superior.
 
 ```bash
-# Nível 1 — modo LITERAL
-python gurudev-cli.py examples/mvp_demo.guru --hermeneutica 1
+# Instalar em modo editável
+pip install -e .
 
-# Nível 4 — modo CONTEXTUAL (coordenadas GuruMatrix)
-python gurudev-cli.py examples/mvp_demo.guru --hermeneutica 4
+# Executar nível 1 (LITERAL)
+python gurudev/cli.py run examples/mvp_demo.guru --hermeneutica 1
 
-# Nível 7 — modo ONTOLÓGICO (expansão completa)
-python gurudev-cli.py examples/mvp_demo.guru --hermeneutica 7
+# Executar nível 4 (CONTEXTUAL)
+python gurudev/cli.py run examples/mvp_demo.guru --hermeneutica 4
 
-# Demo completo — todos os 7 níveis
-python gurudev-cli.py examples/mvp_demo.guru --demo
+# Executar modo Demo (todos os 7 níveis)
+python gurudev/cli.py run examples/mvp_demo.guru --demo
 
-# Dry-run semântico
-python gurudev-cli.py examples/mvp_demo.guru --dry-run
-
-# Ver GuruByte gerado
-python gurudev-cli.py examples/mvp_demo.guru --gurubyte
+# Inspecionar bytecode gerado
+python gurudev/cli.py inspect examples/mvp_demo.guru
 ```
 
 ## Testes
@@ -57,8 +56,12 @@ gurudev-repo/
 ├── runtime/gurudvm.py       # Execução bicameral + DISPATCH_ON_HERMENEUTICS
 ├── tests/test_mvp.py        # Suite completa de testes
 ├── examples/mvp_demo.guru   # Programa de demonstração
-├── gurudev-cli.py           # CLI
-└── requirements.txt         # Dependências
+├── gurudev/                 # Novo pacote de infraestrutura
+│   ├── cli.py               # Nova CLI v0.2 (Click + Rich)
+│   ├── exceptions.py        # Sistema de exceções customizadas
+│   └── logger.py            # Sistema de logging estruturado
+├── pyproject.toml           # Configuração moderna de projeto
+└── requirements.txt         # Dependências (atualizado)
 ```
 
 ## O MVP Semântico
