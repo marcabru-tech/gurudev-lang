@@ -1,7 +1,9 @@
 """GuruDev Parser v0.1-MVP — tokens → GuruAST"""
 from dataclasses import dataclass, field
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, NoReturn, Optional
+
 from compiler.lexer import Token, TokenType
+from gurudev.exceptions import HermeneuticsError, ParserError
 
 # ── AST nodes ──────────────────────────────────────────────────────────────
 
@@ -73,9 +75,9 @@ class Parser:
         self.tokens = tokens
         self.pos = 0
 
-    def erro(self, msg: str):
+    def erro(self, msg: str) -> NoReturn:
         t = self.atual()
-        raise SyntaxError(f"Linha {t.linha}: {msg} (encontrado '{t.valor}')")
+        raise ParserError(expected=msg, found=t.valor, line=t.linha)
 
     def atual(self) -> Token:
         return self.tokens[min(self.pos, len(self.tokens)-1)]
@@ -117,7 +119,7 @@ class Parser:
         elif t.tipo == TokenType.EMOTE:      return self.parse_instrucao_simples("EMOTE")
         elif t.tipo == TokenType.IDENTIFIER: return self.parse_identificador()
         else:
-            self.erro(f"Declaração inesperada")
+            self.erro("Declaração inesperada")
 
     # ── Instruções simples ──────────────────────────────────────────────────
 
@@ -140,7 +142,7 @@ class Parser:
         self.consumir(TokenType.ASSIGN)
         nivel = int(self.consumir(TokenType.NUMBER).valor)
         if not 1 <= nivel <= 7:
-            raise ValueError(f"Hermeneutica deve ser 1-7, recebido {nivel}")
+            raise HermeneuticsError(nivel)
         return TagHermeneutica(nivel=nivel, linha=linha)
 
     def parse_bind(self) -> BindClave:

@@ -4,6 +4,7 @@ import sys
 from enum import IntEnum
 from typing import Optional
 
+
 class LogLevel(IntEnum):
     """Níveis de log do GuruDev."""
     SILENT = 60
@@ -29,7 +30,7 @@ class GuruLogger:
             return
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
-        
+
         # Handler para console com cores
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(level)

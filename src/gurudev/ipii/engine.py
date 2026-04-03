@@ -12,10 +12,8 @@ function/resource names to Python equivalents.
 from __future__ import annotations
 
 import textwrap
-from typing import Any
 
 from gurudev.ipii.intent_analyzer import Intent
-
 
 # ── Beta mappings ─────────────────────────────────────────────────────────────
 # Each entry: gurudev_name -> {"import": <module>, "call": <python_expr_template>}

@@ -7,18 +7,18 @@ Uso:
   gurudev run <arquivo.guru>         Compila + executa
   gurudev <arquivo.guru> [opções]    Interface legada
 """
+import argparse
 import copy
 import json
 import os
 import sys
-import argparse
 from pathlib import Path
 
-from gurumatrix.core import GuruMatrix
+from compiler.bytecode_gen import BytecodeGenerator
+from compiler.context_analyzer import ContextAnalyzer
 from compiler.lexer import Lexer
 from compiler.parser import Parser
-from compiler.context_analyzer import ContextAnalyzer
-from compiler.bytecode_gen import BytecodeGenerator
+from gurumatrix.core import GuruMatrix
 from runtime.gurudvm import GuruDVM
 
 BANNER = """

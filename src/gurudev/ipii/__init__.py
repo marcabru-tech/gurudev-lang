@@ -1,7 +1,7 @@
 """GuruDev IPII package – Interoperability Pipeline for Integrated Intelligence."""
-from gurudev.ipii.engine import IPIIEngine, MAPEAMENTOS_BETA
-from gurudev.ipii.intent_analyzer import IntentAnalyzer, Intent
 from gurudev.ipii.bytecode_adapter_real import BytecodeAdapterReal
+from gurudev.ipii.engine import MAPEAMENTOS_BETA, IPIIEngine
+from gurudev.ipii.intent_analyzer import Intent, IntentAnalyzer
 
 __all__ = [
     "IPIIEngine",

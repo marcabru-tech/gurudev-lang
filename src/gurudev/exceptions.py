@@ -2,7 +2,7 @@
 
 class GuruDevError(Exception):
     """Exceção base para todos os erros do GuruDev."""
-    def __init__(self, message: str, line: int = 0, column: int = 0, 
+    def __init__(self, message: str, line: int = 0, column: int = 0,
                  file: str = "", suggestion: str = ""):
         super().__init__(message)
         self.message = message
@@ -49,11 +49,11 @@ class SemanticError(GuruDevError):
     """Erro durante a análise semântica."""
     pass
 
-class RuntimeError(GuruDevError):
+class GuruRuntimeError(GuruDevError):
     """Erro durante a execução no GuruDVM."""
     pass
 
-class HermeneuticsError(RuntimeError):
+class HermeneuticsError(GuruRuntimeError):
     """Erro específico de nível hermenêutico inválido."""
     def __init__(self, nivel: int, **kwargs):
         super().__init__(
@@ -62,11 +62,11 @@ class HermeneuticsError(RuntimeError):
             **kwargs
         )
 
-class ResourceNotFoundError(RuntimeError):
+class ResourceNotFoundError(GuruRuntimeError):
     """Recurso não encontrado durante LOAD."""
     def __init__(self, resource_name: str, **kwargs):
         super().__init__(
             message=f"Recurso não encontrado: '{resource_name}'",
-            suggestion=f"Verifique se o recurso foi carregado com carregar_recurso().",
+            suggestion="Verifique se o recurso foi carregado com carregar_recurso().",
             **kwargs
         )

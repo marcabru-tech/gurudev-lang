@@ -3,8 +3,9 @@ GuruDVM v0.1-MVP
 Runtime bicameral: executa plano sintático e plano semântico simultaneamente.
 Núcleo do MVP: DISPATCH_ON_HERMENEUTICS produz outputs computacionalmente distintos.
 """
-from typing import Any, Dict, List, Optional
-from gurumatrix.core import GuruMatrix, Ontologia, Dominio
+from typing import Any, Dict, List
+
+from gurumatrix.core import Dominio, GuruMatrix, Ontologia
 
 
 class GuruDVM:
@@ -283,7 +284,6 @@ class GuruDVM:
             origem = operandos[0]; destino = operandos[2]
         else:
             origem = str(operandos); destino = "DESCONHECIDO"
-        recurso = self.recursos.get(origem, f"<{origem}>")
         resultado = {
             "origem": origem, "destino": destino,
             "output": f"TRANSCODE({origem} → {destino}): [representação convertida]",
@@ -311,6 +311,6 @@ class GuruDVM:
         Verifica se a execução atual produziu outputs computacionalmente distintos.
         Critério: pelo menos 2 modos hermenêuticos diferentes registrados em operações DISPLAY.
         """
-        modos = {o["dados"].get("modo") for o in self.saida 
+        modos = {o["dados"].get("modo") for o in self.saida
                  if o["opcode"] == "DISPLAY" and "modo" in o["dados"]}
         return len(modos) >= 2
