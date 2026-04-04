@@ -8,7 +8,6 @@ from typing import Any, Dict, List, Optional
 
 from gurumatrix.core import Dominio, GuruMatrix, Ontologia
 
-
 # ── DecisionTrace ────────────────────────────────────────────────────────────
 
 def _make_decision_trace(

@@ -10,7 +10,6 @@ from typing import Dict, List
 from compiler.parser import (
     AssignNode,
     BindClave,
-    BlockNode,
     DispatchHermeneutica,
     ForNode,
     FuncaoDecl,
