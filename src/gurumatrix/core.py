@@ -6,6 +6,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
+from gurudev.exceptions import SemanticError
+
 
 class Ontologia(Enum):
     SUBSTANCIA = 1
@@ -83,7 +85,7 @@ class GuruMatrix:
                 for chave, info in dados.items():
                     try:
                         ont_name, dom_name = chave.split("_")
-                        celula = self.get_by_name(ont_name, dom_name)
+                        celula = self.get_by_name_safe(ont_name, dom_name)
                         if celula:
                             celula.objetos = info.get("objetos", [])
                             celula.relacoes_ativas = [RelacaoSemantica(r) for r in info.get("relacoes", [])]
@@ -99,22 +101,71 @@ class GuruMatrix:
                 for nome_celula, vetor in embs.items():
                     try:
                         ont_name, dom_name = nome_celula.split("_")
-                        celula = self.get_by_name(ont_name, dom_name)
+                        celula = self.get_by_name_safe(ont_name, dom_name)
                         if celula:
                             celula.embedding = vetor
                     except Exception:
                         continue
 
-    def get(self, x: Ontologia, y: Dominio) -> CelulaGuruMatrix:
-        return self.celulas[(x.value, y.value)]
+    def get(self, x: Ontologia, y: Dominio) -> 'CelulaGuruMatrix':
+        """Retorna célula pela coordenada (Ontologia, Dominio).
 
-    def get_by_name(self, x_name: str, y_name: str) -> Optional[CelulaGuruMatrix]:
+        Raises:
+            SemanticError: se a coordenada não existir na matrix (nunca ocorre
+                           com enums válidos, mas protege contra extensões futuras).
+        """
+        key = (x.value, y.value)
+        if key not in self.celulas:
+            raise SemanticError(
+                f"Célula fantasma detectada: ({x.name}, {y.name}) não existe na GuruMatrix.",
+                suggestion="Use um valor válido de Ontologia e Dominio.",
+            )
+        return self.celulas[key]
+
+    def get_by_name(self, x_name: str, y_name: str) -> 'CelulaGuruMatrix':
+        """Retorna célula pelos nomes das enums.
+
+        Raises:
+            SemanticError: se qualquer um dos nomes for inválido.
+        """
         try:
             x = Ontologia[x_name.upper()]
-            y = Dominio[y_name.upper()]
-            return self.get(x, y)
         except KeyError:
+            valid = [o.name for o in Ontologia]
+            raise SemanticError(
+                f"Ontologia inválida: '{x_name}'. Valores válidos: {valid}",
+                suggestion=f"Use um dos valores válidos de Ontologia: {valid}",
+            )
+        try:
+            y = Dominio[y_name.upper()]
+        except KeyError:
+            valid = [d.name for d in Dominio]
+            raise SemanticError(
+                f"Domínio inválido: '{y_name}'. Valores válidos: {valid}",
+                suggestion=f"Use um dos valores válidos de Dominio: {valid}",
+            )
+        return self.get(x, y)
+
+    def get_by_name_safe(self, x_name: str, y_name: str) -> Optional['CelulaGuruMatrix']:
+        """Versão que retorna None em vez de levantar exceção (para compatibilidade)."""
+        try:
+            return self.get_by_name(x_name, y_name)
+        except SemanticError:
             return None
+
+    def validate_cell_reference(self, name: str) -> bool:
+        """Valida se um nome de célula 'ONTOLOGIA_DOMINIO' é válido.
+
+        Returns True se válido, raises SemanticError se não.
+        """
+        parts = name.split("_", 1)
+        if len(parts) != 2:
+            raise SemanticError(
+                f"Nome de célula inválido: '{name}'. Formato esperado: 'ONTOLOGIA_DOMINIO'.",
+                suggestion="Use o formato ONTOLOGIA_DOMINIO, ex: ACAO_CIENCIA",
+            )
+        self.get_by_name(parts[0], parts[1])
+        return True
 
     def buscar_homologos(self, ont: Ontologia, dom_origem: Dominio) -> List[Dict[str, Any]]:
         """Busca objetos na mesma categoria ontológica em outros domínios."""

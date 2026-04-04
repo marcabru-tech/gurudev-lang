@@ -132,34 +132,44 @@ def build(arquivo):
 @main.command()
 @click.argument('arquivo', type=click.Path(exists=True))
 @click.option('--output', '-o', default=None, help='Arquivo de saída Python (.py); padrão: stdout')
-def export(arquivo, output):
-    """Transpila um arquivo .guru ou .gurub para Python via pipeline IPII."""
-    from gurudev.ipii import BytecodeAdapterReal, IntentAnalyzer, IPIIEngine
+@click.option('--nivel', '-n', default=4, type=click.IntRange(1, 7),
+              help='Nível hermenêutico alvo (1–7; padrão: 4)')
+def export(arquivo, output, nivel):
+    """Transpila um arquivo .guru ou .gurub para Python via pipeline IPII.
+
+    O nível hermenêutico (--nivel) controla o contrato DecisionTrace gerado:
+      1–3 → Python imperativo puro
+      4   → DecisionTrace com 1 evento por bloco de controle
+      5   → DecisionTrace com histórico completo de eventos
+      6   → DecisionTrace com grafo de fluxo
+      7   → DecisionTrace com snapshots de estado nas arestas do grafo
+    """
+    from gurudev.ipii.transpiler import IPIITranspiler
 
     console.print(BANNER)
     try:
         caminho = Path(arquivo)
         sufixo = caminho.suffix.lower()
 
+        transpiler = IPIITranspiler()
+
         if sufixo == '.guru':
             codigo = caminho.read_text()
-            gurubyte, _ = compilar(codigo, arquivo)
+            py_source = transpiler.transpile_source(codigo, nivel=nivel,
+                                                     filename=str(caminho))
         elif sufixo == '.gurub':
             with open(arquivo, 'r') as f:
                 gurubyte = json.load(f)
+            py_source = transpiler.transpile_bytecode(gurubyte, nivel=nivel)
         else:
             console.print(f"[bold red]Erro:[/bold red] Extensão não suportada '{sufixo}'. Use .guru ou .gurub.")
             raise SystemExit(1)
-
-        adapted = BytecodeAdapterReal().adapt(gurubyte)
-        intent = IntentAnalyzer().analyze(adapted)
-        py_source = IPIIEngine().generate(adapted, intent)
 
         if output:
             Path(output).write_text(py_source)
             console.print(
                 f"[bold green]Sucesso![/bold green] Python exportado para: {output}\n"
-                f"[dim]Intent: {intent.name} {intent.tags} herm={intent.hermeneutics}[/dim]"
+                f"[dim]Nível hermenêutico: {nivel}[/dim]"
             )
         else:
             console.print(Panel("[bold blue]Python Gerado (IPII)[/bold blue]"))
