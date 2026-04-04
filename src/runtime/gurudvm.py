@@ -38,6 +38,10 @@ def _make_decision_trace(
     }
 
 
+# Keys that are metadata (not variable snapshots) in loop iteration events
+_GRAPH_EVENT_META_KEYS = frozenset(("event", "iteration", "condition_value", "env_snapshot"))
+
+
 def _make_graph(kind: str, events: List[dict], level: int) -> dict:
     """Cria representação em grafo do fluxo de controle."""
     nodes: List[dict] = []
@@ -62,7 +66,7 @@ def _make_graph(kind: str, events: List[dict], level: int) -> dict:
             if level >= 7:
                 # Level 7: include variable snapshot in graph node
                 node["env_snapshot"] = {k: v for k, v in event.items()
-                                         if k not in ("event", "iteration", "condition_value")}
+                                         if k not in _GRAPH_EVENT_META_KEYS}
             nodes.append(node)
             if i == 0:
                 edges.append({"from": "condition", "to": node_id, "label": "loop"})

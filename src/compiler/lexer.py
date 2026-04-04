@@ -280,6 +280,7 @@ class Lexer:
                 self.avancar()
             elif ch == '/':
                 if self.proximo == '/':
+                    # '//' starts a line comment; skip until newline or end of input
                     while self.atual not in ('\n', '\0'):
                         self.avancar()
                 else:

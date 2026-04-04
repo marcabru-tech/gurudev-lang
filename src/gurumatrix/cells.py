@@ -165,7 +165,7 @@ def _build_cells() -> dict[str, dict]:
 
 
 CELLS: dict[str, dict] = _build_cells()
-assert len(CELLS) == 100, f"CELLS deve ter exatamente 100 entradas, tem {len(CELLS)}"
+assert len(CELLS) == 100, f"CELLS must have exactly 100 entries, has {len(CELLS)}"
 
 
 def cell_meta(ont: Ontologia, dom: Dominio) -> dict:
