@@ -8,13 +8,18 @@ from dataclasses import dataclass
 from typing import Dict, List
 
 from compiler.parser import (
+    AssignNode,
     BindClave,
+    BlockNode,
     DispatchHermeneutica,
+    ForNode,
     FuncaoDecl,
+    IfNode,
     Instrucao,
     NoAST,
     Programa,
     TagHermeneutica,
+    WhileNode,
 )
 
 CLAVE_PARA_ONTOLOGIA: Dict[str, str] = {
@@ -106,6 +111,32 @@ class ContextAnalyzer:
         elif isinstance(no, FuncaoDecl):
             ctx_func = ctx.copia()
             self._visitar_lista(no.corpo, ctx_func)
+
+        elif isinstance(no, AssignNode):
+            # Propagate context metadata to the assignment node
+            no.hermeneutica = ctx.hermeneutica
+            no.clave = ctx.clave
+            no.ontologia = ctx.ontologia
+
+        elif isinstance(no, IfNode):
+            no.hermeneutica = ctx.hermeneutica
+            no.clave = ctx.clave
+            if no.then_block:
+                self._visitar_lista(no.then_block.statements, ctx.copia())
+            if no.else_block:
+                self._visitar_lista(no.else_block.statements, ctx.copia())
+
+        elif isinstance(no, WhileNode):
+            no.hermeneutica = ctx.hermeneutica
+            no.clave = ctx.clave
+            if no.body_block:
+                self._visitar_lista(no.body_block.statements, ctx.copia())
+
+        elif isinstance(no, ForNode):
+            no.hermeneutica = ctx.hermeneutica
+            no.clave = ctx.clave
+            if no.body_block:
+                self._visitar_lista(no.body_block.statements, ctx.copia())
 
     def relatorio_dry_run(self) -> dict:
         inertes = [e for e in self.dry_run_report if e["status"] == "PENDENTE_VERIFICACAO"]
