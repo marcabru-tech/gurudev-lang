@@ -6,7 +6,7 @@ Células sem dado carregado são marcadas como stub=True.
 """
 from __future__ import annotations
 
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 from .core import CelulaGuruMatrix, Dominio, Ontologia, RelacaoSemantica
 
