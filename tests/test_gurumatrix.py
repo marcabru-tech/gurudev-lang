@@ -170,6 +170,7 @@ class TestPopularMinimo:
         matrix = GuruMatrix()
         celula = matrix.get(Ontologia.ACAO, Dominio.CIENCIA)
         assert len(celula.objetos) > 0
+        assert "fatorial" in celula.objetos
 
     def test_buscar_homologos(self):
         matrix = GuruMatrix()
