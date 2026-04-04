@@ -1,0 +1,29 @@
+// Exemplo: Cálculo Fatorial — GuruDev v0.2
+// Demonstra controle de fluxo (Turing-completude) com while e for.
+//
+// Este arquivo é compatível com todos os níveis hermenêuticos (1–7).
+// Para níveis 4–7 o runtime emite um DecisionTrace estruturado.
+
+// ── Fatorial de 5 usando while ───────────────────────────────────────────────
+x = 5
+acc = 1
+while x > 1 {
+  acc = acc * x
+  x = x - 1
+}
+display acc
+
+// ── Fatorial de 5 usando for ─────────────────────────────────────────────────
+acc2 = 1
+for i in range(1, 6) {
+  acc2 = acc2 * i
+}
+display acc2
+
+// ── Exemplo de if/else ───────────────────────────────────────────────────────
+resultado = acc
+if resultado > 100 {
+  display "fatorial maior que 100"
+} else {
+  display "fatorial menor ou igual a 100"
+}

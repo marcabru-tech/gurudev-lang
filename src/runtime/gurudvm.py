@@ -1,11 +1,80 @@
 """
-GuruDVM v0.1-MVP
+GuruDVM v0.2
 Runtime bicameral: executa plano sintático e plano semântico simultaneamente.
 Núcleo do MVP: DISPATCH_ON_HERMENEUTICS produz outputs computacionalmente distintos.
+Controle de fluxo (if/while/for) com DecisionTrace para níveis 4–7.
 """
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from gurumatrix.core import Dominio, GuruMatrix, Ontologia
+
+
+# ── DecisionTrace ────────────────────────────────────────────────────────────
+
+def _make_decision_trace(
+    kind: str,
+    level: int,
+    condition: str,
+    condition_value: Optional[bool],
+    taken_branch: Optional[str],
+    iterations: Optional[int],
+    events: List[dict],
+) -> dict:
+    """Cria o contrato único DecisionTrace para níveis 4–7."""
+    # nível 4: 1 evento; níveis 5+: histórico completo
+    eventos_saida = events[:1] if level == 4 else list(events)
+    graph = None
+    if level >= 6:
+        graph = _make_graph(kind, events, level)
+    return {
+        "kind": kind,
+        "level": level,
+        "condition": condition,
+        "condition_value": condition_value,
+        "taken_branch": taken_branch,
+        "iterations": iterations,
+        "events": eventos_saida,
+        "graph": graph,
+    }
+
+
+# Keys that are metadata (not variable snapshots) in loop iteration events
+_GRAPH_EVENT_META_KEYS = frozenset(("event", "iteration", "condition_value", "env_snapshot"))
+
+
+def _make_graph(kind: str, events: List[dict], level: int) -> dict:
+    """Cria representação em grafo do fluxo de controle."""
+    nodes: List[dict] = []
+    edges: List[dict] = []
+
+    if kind == "if":
+        nodes.append({"id": "condition", "type": "condition"})
+        nodes.append({"id": "then", "type": "branch", "label": "then"})
+        nodes.append({"id": "else", "type": "branch", "label": "else"})
+        edges.append({"from": "condition", "to": "then", "label": "true"})
+        edges.append({"from": "condition", "to": "else", "label": "false"})
+    else:  # while / for
+        nodes.append({"id": "start", "type": "start"})
+        nodes.append({"id": "condition", "type": "condition"})
+        nodes.append({"id": "end", "type": "end"})
+        edges.append({"from": "start", "to": "condition"})
+        edges.append({"from": "condition", "to": "end", "label": "exit"})
+
+        for i, event in enumerate(events):
+            node_id = f"iter_{i}"
+            node: dict = {"id": node_id, "type": "iteration", "iteration": i}
+            if level >= 7:
+                # Level 7: include variable snapshot in graph node
+                node["env_snapshot"] = {k: v for k, v in event.items()
+                                         if k not in _GRAPH_EVENT_META_KEYS}
+            nodes.append(node)
+            if i == 0:
+                edges.append({"from": "condition", "to": node_id, "label": "loop"})
+            else:
+                edges.append({"from": f"iter_{i - 1}", "to": node_id})
+            edges.append({"from": node_id, "to": "condition"})
+
+    return {"nodes": nodes, "edges": edges}
 
 
 class GuruDVM:
@@ -17,6 +86,7 @@ class GuruDVM:
         }
         self.saida: List[dict] = []   # log de outputs para os testes inspecionarem
         self.recursos: Dict[str, Any] = {}   # banco de recursos carregados
+        self.env: Dict[str, Any] = {}   # variáveis do programa em execução
 
     # ── API pública ─────────────────────────────────────────────────────────
 
@@ -27,6 +97,7 @@ class GuruDVM:
     def executar(self, gurubyte: dict) -> List[dict]:
         """Executa um arquivo GuruByte completo."""
         self.saida = []
+        self.env = {}
         ctx_default = gurubyte.get("CONTEXT_DEFAULT", {})
         self.contexto.update(ctx_default)
 
@@ -37,15 +108,29 @@ class GuruDVM:
 
     # ── Execução de blocos ──────────────────────────────────────────────────
 
-    def _executar_bloco(self, bloco: dict):
-        ctx_bloco = {**self.contexto, **bloco.get("CONTEXT", {})}
+    def _executar_bloco(self, bloco: dict, parent_ctx: Optional[Dict[str, Any]] = None):
+        base = parent_ctx if parent_ctx is not None else self.contexto
+        ctx_bloco: Dict[str, Any] = {**base, **bloco.get("CONTEXT", {})}
+        # When a parent context is supplied (runtime override), its hermeneutics level
+        # propagates to all descendant blocks so the entire subtree runs at the same level.
+        if parent_ctx is not None:
+            ctx_bloco["hermeneutics"] = parent_ctx.get("hermeneutics",
+                                                        ctx_bloco.get("hermeneutics", 1))
         tipo = bloco.get("type", "INSTRUCOES")
 
         if tipo == "DISPATCH_ON_HERMENEUTICS":
             self._dispatch_hermeneutica(bloco, ctx_bloco)
         elif tipo == "FUNCTION":
             for sub in bloco.get("corpo", []):
-                self._executar_bloco(sub)
+                self._executar_bloco(sub, ctx_bloco)
+        elif tipo == "IF":
+            self._executar_if(bloco, ctx_bloco)
+        elif tipo == "WHILE":
+            self._executar_while(bloco, ctx_bloco)
+        elif tipo == "FOR":
+            self._executar_for(bloco, ctx_bloco)
+        elif tipo == "ASSIGN":
+            self._executar_assign(bloco)
         else:
             for instr in bloco.get("instructions", []):
                 self._executar_instrucao(instr, ctx_bloco)
@@ -73,6 +158,147 @@ class GuruDVM:
         ctx_dispatch = {**ctx, "hermeneutics": nivel}
         for instr in corpo:
             self._executar_instrucao(instr, ctx_dispatch)
+
+    # ── Controle de fluxo ───────────────────────────────────────────────────
+
+    def _executar_assign(self, bloco: dict):
+        """Executa uma atribuição de variável: var = expr."""
+        var_name = bloco.get("var", "")
+        expr = bloco.get("expr", {})
+        value = self._eval_expr(expr)
+        self.env[var_name] = value
+
+    def _executar_if(self, bloco: dict, ctx: dict):
+        """Executa if/else. Emite DecisionTrace para níveis 4–7."""
+        condition = bloco.get("condition", {})
+        condition_repr = self._repr_expr(condition)
+        condition_val = bool(self._eval_expr(condition))
+        herm = ctx.get("hermeneutics", 1)
+        taken = "then" if condition_val else "else"
+
+        events: List[dict] = [{"event": "branch", "condition_value": condition_val, "taken": taken}]
+
+        if condition_val:
+            for sub in bloco.get("then", []):
+                self._executar_bloco(sub, ctx)
+        else:
+            for sub in bloco.get("else", []):
+                self._executar_bloco(sub, ctx)
+
+        if herm >= 4:
+            trace = _make_decision_trace("if", herm, condition_repr, condition_val,
+                                         taken, None, events)
+            self._registrar_saida("DECISION_TRACE", herm, "if", trace)
+
+    def _executar_while(self, bloco: dict, ctx: dict):
+        """Executa while. Emite DecisionTrace para níveis 4–7."""
+        condition = bloco.get("condition", {})
+        condition_repr = self._repr_expr(condition)
+        herm = ctx.get("hermeneutics", 1)
+
+        iterations = 0
+        events: List[dict] = []
+
+        while True:
+            cond_val = bool(self._eval_expr(condition))
+            if not cond_val:
+                break
+            event: Dict[str, Any] = {
+                "event": "iteration",
+                "iteration": iterations,
+                "condition_value": cond_val,
+            }
+            if herm >= 7:
+                event["env_snapshot"] = dict(self.env)
+            events.append(event)
+            for sub in bloco.get("body", []):
+                self._executar_bloco(sub, ctx)
+            iterations += 1
+
+        if herm >= 4:
+            trace = _make_decision_trace("while", herm, condition_repr, None,
+                                         None, iterations, events)
+            self._registrar_saida("DECISION_TRACE", herm, "while", trace)
+
+    def _executar_for(self, bloco: dict, ctx: dict):
+        """Executa for..in. Emite DecisionTrace para níveis 4–7."""
+        var_name = bloco.get("var", "i")
+        iterable_expr = bloco.get("iterable", {})
+        iterable = self._eval_expr(iterable_expr)
+        herm = ctx.get("hermeneutics", 1)
+
+        iterations = 0
+        events: List[dict] = []
+
+        for val in (iterable if iterable is not None else []):
+            self.env[var_name] = val
+            event: Dict[str, Any] = {
+                "event": "iteration",
+                "iteration": iterations,
+                var_name: val,
+                "condition_value": True,
+            }
+            if herm >= 7:
+                event["env_snapshot"] = dict(self.env)
+            events.append(event)
+            for sub in bloco.get("body", []):
+                self._executar_bloco(sub, ctx)
+            iterations += 1
+
+        if herm >= 4:
+            trace = _make_decision_trace("for", herm, self._repr_expr(iterable_expr),
+                                         None, None, iterations, events)
+            self._registrar_saida("DECISION_TRACE", herm, "for", trace)
+
+    # ── Avaliador de expressões ─────────────────────────────────────────────
+
+    def _eval_expr(self, expr: dict) -> Any:
+        """Avalia uma expressão serializada (dict) usando self.env."""
+        kind = expr.get("kind", "")
+        if kind == "literal":
+            return expr.get("value")
+        elif kind == "var":
+            return self.env.get(expr.get("name", ""), 0)
+        elif kind == "binop":
+            left = self._eval_expr(expr.get("left", {}))
+            right = self._eval_expr(expr.get("right", {}))
+            return self._apply_op(expr.get("op", ""), left, right)
+        elif kind == "call":
+            func = expr.get("func", "")
+            args = [self._eval_expr(a) for a in expr.get("args", [])]
+            return self._call_builtin(func, args)
+        return None
+
+    def _apply_op(self, op: str, left: Any, right: Any) -> Any:
+        if op == "+":  return left + right
+        if op == "-":  return left - right
+        if op == "*":  return left * right
+        if op == "/":  return (left / right) if right else 0
+        if op == ">":  return left > right
+        if op == "<":  return left < right
+        if op == ">=": return left >= right
+        if op == "<=": return left <= right
+        if op == "==": return left == right
+        if op == "!=": return left != right
+        return None
+
+    def _call_builtin(self, func: str, args: List[Any]) -> Any:
+        if func == "range":
+            return range(*[int(a) for a in args])
+        return None
+
+    def _repr_expr(self, expr: dict) -> str:
+        kind = expr.get("kind", "")
+        if kind == "literal":    return repr(expr.get("value"))
+        if kind == "var":        return expr.get("name", "?")
+        if kind == "binop":
+            return (f"{self._repr_expr(expr.get('left', {}))} "
+                    f"{expr.get('op')} "
+                    f"{self._repr_expr(expr.get('right', {}))}")
+        if kind == "call":
+            args = ", ".join(self._repr_expr(a) for a in expr.get("args", []))
+            return f"{expr.get('func')}({args})"
+        return "?"
 
     # ── Execução de instruções individuais ─────────────────────────────────
 
@@ -114,12 +340,22 @@ class GuruDVM:
 
     def _op_display(self, operandos: List, mods: dict, herm: int, clave: str, ctx: dict):
         """
-        DISPLAY IN CONTEXT: comportamento varia com nível hermenêutico.
-        Este é o caso demonstrável do MVP.
+        DISPLAY: pode exibir literal, variável do env, ou recurso da pilha.
+        DISPLAY IN CONTEXT: comportamento varia com nível hermenêutico (MVP).
         """
-        recurso = self.pilha[-1] if self.pilha else {"nome": "?", "valor": None}
-        nome_recurso = recurso.get("nome", "?")
-        valor = recurso.get("valor")
+        if not mods.get("in_context") and operandos:
+            # Operand direto: variável do env ou literal de string
+            raw = operandos[0]
+            if raw in self.env:
+                valor: Any = self.env[raw]
+                nome_recurso = raw
+            else:
+                valor = raw
+                nome_recurso = raw
+        else:
+            recurso = self.pilha[-1] if self.pilha else {"nome": "?", "valor": None}
+            nome_recurso = recurso.get("nome", "?")
+            valor = recurso.get("valor")
 
         resultado = self._render_por_hermeneutica(nome_recurso, valor, herm, clave)
         self._registrar_saida("DISPLAY", herm, nome_recurso, resultado)
@@ -208,11 +444,11 @@ class GuruDVM:
 
     def _inferir_coordenada(self, nome: str, clave: str) -> tuple:
         mapa = {
-            "ciencia": (Ontologia.ACAO, Dominio.CIENCIA),
-            "arte": (Ontologia.QUALIDADE, Dominio.ARTE),
+            "ciencia":   (Ontologia.ACAO, Dominio.CIENCIA),
+            "arte":      (Ontologia.QUALIDADE, Dominio.ARTE),
             "filosofia": (Ontologia.RELACAO, Dominio.FILOSOFIA),
-            "matematica": (Ontologia.RELACAO, Dominio.MATEMATICA),
-            "tecnologia": (Ontologia.SUBSTANCIA, Dominio.TECNOLOGIA),
+            "matematica":(Ontologia.RELACAO, Dominio.MATEMATICA),
+            "tecnologia":(Ontologia.SUBSTANCIA, Dominio.TECNOLOGIA),
         }
         return mapa.get(clave.lower(), (Ontologia.SUBSTANCIA, Dominio.TECNOLOGIA))
 
@@ -314,3 +550,5 @@ class GuruDVM:
         modos = {o["dados"].get("modo") for o in self.saida
                  if o["opcode"] == "DISPLAY" and "modo" in o["dados"]}
         return len(modos) >= 2
+
+

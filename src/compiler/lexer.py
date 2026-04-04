@@ -29,10 +29,26 @@ class TokenType(Enum):
     EMOTE = auto()
     IN = auto()
     CONTEXT = auto()
+    IF = auto()
+    ELSE = auto()
+    WHILE = auto()
+    FOR = auto()
 
     # Operadores
     ASSIGN = auto()
     ARROW = auto()
+    # Operadores aritméticos
+    PLUS = auto()
+    MINUS = auto()
+    STAR = auto()
+    SLASH = auto()
+    # Operadores de comparação
+    GT = auto()
+    LT = auto()
+    GTE = auto()
+    LTE = auto()
+    EQ = auto()
+    NEQ = auto()
 
     # Delimitadores
     LPAREN = auto()
@@ -81,6 +97,10 @@ class Lexer:
         'emote': TokenType.EMOTE,
         'in': TokenType.IN,
         'context': TokenType.CONTEXT,
+        'if': TokenType.IF,
+        'else': TokenType.ELSE,
+        'while': TokenType.WHILE,
+        'for': TokenType.FOR,
     }
 
     ESCAPES: dict[str, str] = {
@@ -224,12 +244,48 @@ class Lexer:
                 self.tokens.append(self.ler_identificador())
             # Operadores e delimitadores
             elif ch == '=':
-                self.tokens.append(Token(TokenType.ASSIGN, '=', linha, coluna))
+                if self.proximo == '=':
+                    self.tokens.append(Token(TokenType.EQ, '==', linha, coluna))
+                    self.avancar(); self.avancar()
+                else:
+                    self.tokens.append(Token(TokenType.ASSIGN, '=', linha, coluna))
+                    self.avancar()
+            elif ch == '!' and self.proximo == '=':
+                self.tokens.append(Token(TokenType.NEQ, '!=', linha, coluna))
+                self.avancar(); self.avancar()
+            elif ch == '>' and self.proximo == '=':
+                self.tokens.append(Token(TokenType.GTE, '>=', linha, coluna))
+                self.avancar(); self.avancar()
+            elif ch == '>':
+                self.tokens.append(Token(TokenType.GT, '>', linha, coluna))
+                self.avancar()
+            elif ch == '<' and self.proximo == '=':
+                self.tokens.append(Token(TokenType.LTE, '<=', linha, coluna))
+                self.avancar(); self.avancar()
+            elif ch == '<':
+                self.tokens.append(Token(TokenType.LT, '<', linha, coluna))
+                self.avancar()
+            elif ch == '+':
+                self.tokens.append(Token(TokenType.PLUS, '+', linha, coluna))
                 self.avancar()
             elif ch == '-' and self.proximo == '>':
                 self.tokens.append(Token(TokenType.ARROW, '->', linha, coluna))
                 self.avancar()
                 self.avancar()
+            elif ch == '-':
+                self.tokens.append(Token(TokenType.MINUS, '-', linha, coluna))
+                self.avancar()
+            elif ch == '*':
+                self.tokens.append(Token(TokenType.STAR, '*', linha, coluna))
+                self.avancar()
+            elif ch == '/':
+                if self.proximo == '/':
+                    # '//' starts a line comment; skip until newline or end of input
+                    while self.atual not in ('\n', '\0'):
+                        self.avancar()
+                else:
+                    self.tokens.append(Token(TokenType.SLASH, '/', linha, coluna))
+                    self.avancar()
             elif ch == '(':
                 self.tokens.append(Token(TokenType.LPAREN, '(', linha, coluna))
                 self.avancar()

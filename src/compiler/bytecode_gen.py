@@ -1,19 +1,28 @@
 """
-GuruDev Bytecode Generator v0.1-MVP
+GuruDev Bytecode Generator v0.2
 GuruAST → GuruByte (representação dict, serializável em JSON)
 """
 import hashlib
 import json
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from compiler.parser import (
+    AssignNode,
+    BinaryOpNode,
     BindClave,
+    BlockNode,
+    CallNode,
     DispatchHermeneutica,
+    ForNode,
     FuncaoDecl,
+    Identificador,
+    IfNode,
     Instrucao,
+    Literal,
     NoAST,
     Programa,
     TagHermeneutica,
+    WhileNode,
 )
 
 
@@ -79,6 +88,52 @@ class BytecodeGenerator:
                 "instructions": [self._serializar_instrucao(no)],
             }
 
+        elif isinstance(no, AssignNode):
+            bid = self._novo_id_bloco()
+            return {
+                "id": bid,
+                "CONTEXT": dict(ctx),
+                "type": "ASSIGN",
+                "var": no.name,
+                "expr": self._serializar_expr(no.value),
+            }
+
+        elif isinstance(no, IfNode):
+            bid = self._novo_id_bloco()
+            then_blocks = self._gerar_bloco(no.then_block, ctx, constantes)
+            else_blocks = self._gerar_bloco(no.else_block, ctx, constantes) if no.else_block else []
+            return {
+                "id": bid,
+                "CONTEXT": dict(ctx),
+                "type": "IF",
+                "condition": self._serializar_expr(no.condition),
+                "then": then_blocks,
+                "else": else_blocks,
+            }
+
+        elif isinstance(no, WhileNode):
+            bid = self._novo_id_bloco()
+            body_blocks = self._gerar_bloco(no.body_block, ctx, constantes)
+            return {
+                "id": bid,
+                "CONTEXT": dict(ctx),
+                "type": "WHILE",
+                "condition": self._serializar_expr(no.condition),
+                "body": body_blocks,
+            }
+
+        elif isinstance(no, ForNode):
+            bid = self._novo_id_bloco()
+            body_blocks = self._gerar_bloco(no.body_block, ctx, constantes)
+            return {
+                "id": bid,
+                "CONTEXT": dict(ctx),
+                "type": "FOR",
+                "var": no.var_name,
+                "iterable": self._serializar_expr(no.iterable_expr),
+                "body": body_blocks,
+            }
+
         elif isinstance(no, DispatchHermeneutica):
             bid = self._novo_id_bloco()
             casos_serializados = {}
@@ -116,6 +171,40 @@ class BytecodeGenerator:
             }
 
         return None
+
+    def _gerar_bloco(self, bloco: Optional[BlockNode], ctx: dict, constantes: dict) -> List[dict]:
+        """Serializa um BlockNode como lista de sub-blocos."""
+        if bloco is None:
+            return []
+        result = []
+        for stmt in bloco.statements:
+            r = self._gerar_no(stmt, dict(ctx), constantes)
+            if r is not None:
+                result.append(r)
+        return result
+
+    def _serializar_expr(self, no: Optional[NoAST]) -> dict:
+        """Serializa uma expressão AST como dict JSON-serializável."""
+        if no is None:
+            return {"kind": "literal", "value": None}
+        if isinstance(no, Literal):
+            return {"kind": "literal", "value": no.valor}
+        if isinstance(no, Identificador):
+            return {"kind": "var", "name": no.nome}
+        if isinstance(no, BinaryOpNode):
+            return {
+                "kind": "binop",
+                "op": no.op,
+                "left": self._serializar_expr(no.left),
+                "right": self._serializar_expr(no.right),
+            }
+        if isinstance(no, CallNode):
+            return {
+                "kind": "call",
+                "func": no.func,
+                "args": [self._serializar_expr(a) for a in no.args],
+            }
+        return {"kind": "unknown"}
 
     def _serializar_instrucao(self, no: NoAST) -> dict:
         if isinstance(no, Instrucao):
