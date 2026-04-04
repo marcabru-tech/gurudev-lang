@@ -163,23 +163,20 @@ class TestValidacao:
         assert "Dica" in str(erro) or erro.suggestion
 
 
-# ── Sem regressão em popular_minimo ───────────────────────────────────────────
+# ── Sem regressão em células populadas ───────────────────────────────────────
 
 class TestPopularMinimo:
     def test_popular_minimo_executa_sem_erro(self):
         matrix = GuruMatrix()
-        matrix.popular_minimo()
         celula = matrix.get(Ontologia.ACAO, Dominio.CIENCIA)
-        assert "fatorial" in celula.objetos
+        assert len(celula.objetos) > 0
 
     def test_buscar_homologos(self):
         matrix = GuruMatrix()
-        matrix.popular_minimo()
         homologos = matrix.buscar_homologos(Ontologia.ACAO, Dominio.CIENCIA)
         assert isinstance(homologos, list)
 
     def test_buscar_similitudes(self):
         matrix = GuruMatrix()
-        matrix.popular_minimo()
         similitudes = matrix.buscar_similitudes(Dominio.CIENCIA, Ontologia.ACAO)
         assert isinstance(similitudes, list)

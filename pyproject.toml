@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gurudev-lang"
-version = "0.1.0"
+version = "0.2.0"
 description = "Linguagem de programação semântica com dispatch hermenêutico"
 readme = "README.md"
 license = {text = "Hubstry-GuruDev License v1.0"}
@@ -27,7 +27,6 @@ keywords = ["language", "compiler", "semantic", "hermeneutics", "gurudev"]
 requires-python = ">=3.9"
 dependencies = [
     "click>=8.0",
-    "pydantic>=2.0",
     "rich>=13.0",
 ]
 
@@ -47,7 +46,6 @@ docs = [
 
 [project.scripts]
 gurudev = "gurudev.cli:main"
-gurudev-cli = "cli.gurudev_cli:main"
 
 [project.urls]
 Homepage = "https://github.com/marcabru-tech/gurudev-lang"
@@ -61,7 +59,6 @@ packages = [
     "src/compiler",
     "src/runtime",
     "src/gurudev",
-    "src/cli",
 ]
 
 [tool.hatch.build.targets.sdist]
@@ -102,7 +99,7 @@ disallow_incomplete_defs = false
 check_untyped_defs = false
 
 [[tool.mypy.overrides]]
-module = ["runtime.gurudvm", "compiler.bytecode_gen", "gurudev.logger"]
+module = ["runtime.gurudvm", "compiler.bytecode_gen"]
 ignore_errors = true
 
 [tool.pytest.ini_options]

@@ -26,7 +26,6 @@ def executar(codigo: str, hermeneutica: int, recursos: dict = None) -> list:
     for bloco in gurubyte["CODEBLOCKS"]:
         bloco.setdefault("CONTEXT", {})["hermeneutics"] = hermeneutica
     matrix = GuruMatrix()
-    matrix.popular_minimo()
     dvm = GuruDVM(matrix)
     if recursos:
         for k, v in recursos.items():
@@ -240,7 +239,7 @@ dispatch hermeneutica x {
 
     def test_dvm_executa_load(self):
         gurubyte = compilar("load meu_recurso")
-        matrix   = GuruMatrix(); matrix.popular_minimo()
+        matrix   = GuruMatrix()
         dvm      = GuruDVM(matrix)
         dvm.carregar_recurso("meu_recurso", "valor_teste")
         saidas   = dvm.executar(gurubyte)
@@ -291,8 +290,8 @@ class TestGuruMatrix:
         assert len(m.celulas) == 100
 
     def test_popular_minimo_adiciona_objetos(self):
+        """ACAO_CIENCIA deve ter objetos carregados do JSON."""
         m = GuruMatrix()
-        m.popular_minimo()
         from gurumatrix.core import Ontologia, Dominio
         c = m.get(Ontologia.ACAO, Dominio.CIENCIA)
         assert len(c.objetos) > 0

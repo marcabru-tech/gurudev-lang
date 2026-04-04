@@ -1,6 +1,6 @@
-# GuruDev® v0.1-MVP
+# GuruDev® v0.2
 
-Implementação mínima funcional focada no **MVP Semântico**:
+Implementação funcional focada no **MVP Semântico**:
 provar que `DISPATCH_ON_HERMENEUTICS` produz outputs computacionalmente distintos.
 
 ## Documentação
@@ -14,10 +14,10 @@ A especificação técnica fundacional da linguagem pode ser encontrada em:
 |---|---|
 | Lexer | ✅ |
 | Parser | ✅ |
-| GuruMatrix | ⚠️ 33% densidade |
+| GuruMatrix | ✅ 60+ células (ARTE, CIÊNCIA, FILOSOFIA, LINGUAGEM, MATEMÁTICA, TECNOLOGIA) |
 | Runtime DVM | ✅ |
-| CLI (argparse) | ✅ |
-| CLI (click/rich) | ⚠️ requer `click` e `rich` instalados |
+| CLI (click/rich) | ✅ |
+| Pipeline compartilhada | ✅ `gurudev.pipeline` |
 | IPII Transpiler | 🧪 experimental |
 | CI/CD | ✅ (Python 3.9–3.12) |
 | Turing-completude | ❌ planejado |
@@ -31,21 +31,7 @@ pip install -e ".[dev]"
 
 ## Execução
 
-### CLI legado (argparse — sem dependências extras)
-
-```bash
-# Executar com nível hermenêutico específico
-PYTHONPATH=src python3 gurudev-cli.py examples/mvp_demo.guru --hermeneutica 1
-PYTHONPATH=src python3 gurudev-cli.py examples/mvp_demo.guru --hermeneutica 7
-
-# Modo demo — executa todos os 7 níveis hermenêuticos
-PYTHONPATH=src python3 gurudev-cli.py examples/mvp_demo.guru --demo
-
-# Inspecionar bytecode gerado
-PYTHONPATH=src python3 gurudev-cli.py examples/mvp_demo.guru --gurubyte
-```
-
-### CLI moderna (click + rich — após `pip install -e .`)
+### CLI (click + rich — após `pip install -e .`)
 
 ```bash
 # Executar com nível específico
@@ -56,6 +42,9 @@ gurudev run examples/mvp_demo.guru --demo
 
 # Compilar para bytecode (.gurub)
 gurudev compile examples/mvp_demo.guru
+
+# Construir bytecode (alias para compile --output)
+gurudev build examples/mvp_demo.guru
 
 # Transpilar para Python via IPII
 gurudev export examples/mvp_demo.guru
@@ -90,15 +79,12 @@ gurudev-lang/
 │   │   └── cells.py             # Definição de células semânticas
 │   ├── runtime/
 │   │   └── gurudvm.py           # Execução bicameral + DISPATCH_ON_HERMENEUTICS
-│   ├── gurudev/
-│   │   ├── cli.py               # CLI v0.2 (Click + Rich)
-│   │   ├── exceptions.py        # Sistema de exceções customizadas
-│   │   ├── logger.py            # Sistema de logging estruturado
-│   │   └── ipii/                # Transpilador IPII → Python
-│   └── cli/
-│       └── gurudev_cli.py       # CLI entry point (click)
-├── tests/                       # Suíte completa de testes (119+ casos)
-├── gurudev-cli.py               # CLI legado (argparse, sem deps extras)
+│   └── gurudev/
+│       ├── cli.py               # CLI v0.2 (Click + Rich)
+│       ├── pipeline.py          # Pipeline compartilhada: compilar() e executar()
+│       ├── exceptions.py        # Sistema de exceções customizadas
+│       └── ipii/                # Transpilador IPII → Python
+├── tests/                       # Suíte completa de testes (191+ casos)
 ├── pyproject.toml               # Configuração moderna de projeto
 └── requirements.txt             # Dependências
 ```

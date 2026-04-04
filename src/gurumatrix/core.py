@@ -197,35 +197,6 @@ class GuruMatrix:
                 })
         return similitudes
 
-    def popular_minimo(self):
-        c = self.get(Ontologia.ACAO, Dominio.CIENCIA)
-        for obj in ["fatorial", "fft", "media", "derivada"]:
-            c.adicionar_objeto(obj)
-        c.relacoes_ativas = [RelacaoSemantica.EQUIVALENCIA, RelacaoSemantica.SIMILITUDE]
-        c.instrucoes_preferenciais = ["EVALUATE", "APPLY", "COMPARE"]
-
-        c = self.get(Ontologia.QUALIDADE, Dominio.ARTE)
-        for obj in ["cor", "textura", "harmonia", "ritmo"]:
-            c.adicionar_objeto(obj)
-        c.relacoes_ativas = [RelacaoSemantica.SIMETRIA, RelacaoSemantica.EQUILIBRIO]
-        c.instrucoes_preferenciais = ["DISPLAY", "TRANSCODE", "EMOTE"]
-
-        c = self.get(Ontologia.RELACAO, Dominio.MATEMATICA)
-        for obj in ["funcao", "morfismo", "isomorfismo"]:
-            c.adicionar_objeto(obj)
-        c.relacoes_ativas = [RelacaoSemantica.HOMOLOGIA, RelacaoSemantica.EQUIVALENCIA]
-        c.instrucoes_preferenciais = ["MAP_TO", "INTEROP_MAP"]
-
-        c = self.get(Ontologia.SUBSTANCIA, Dominio.TECNOLOGIA)
-        for obj in ["int", "string", "array", "dict"]:
-            c.adicionar_objeto(obj)
-        c.instrucoes_preferenciais = ["LOAD", "BIND"]
-
-        c = self.get(Ontologia.TEMPO, Dominio.CIENCIA)
-        for obj in ["serie_temporal", "timestamp", "frequencia"]:
-            c.adicionar_objeto(obj)
-        c.instrucoes_preferenciais = ["APPLY FFT", "EVALUATE", "COMPARE"]
-
     def __repr__(self):
         total = sum(len(c.objetos) for c in self.celulas.values())
         return f"GuruMatrix(100 células, {total} objetos mapeados)"
