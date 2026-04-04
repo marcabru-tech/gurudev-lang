@@ -259,11 +259,6 @@ class Parser:
         nome = self.avancar().valor
         return Identificador(nome=nome)
 
-    def parse_tipo(self):
-        """Consome anotação de tipo (ignorada no MVP)"""
-        while self.atual().tipo not in (TokenType.LBRACE, TokenType.NEWLINE, TokenType.EOF):
-            self.avancar()
-
     # ── Controle de fluxo ──────────────────────────────────────────────────
 
     def parse_assign(self) -> AssignNode:
@@ -478,7 +473,10 @@ class Parser:
                 params.append(self.consumir(TokenType.IDENTIFIER).valor)
         self.consumir(TokenType.RPAREN)
         if self.atual().tipo == TokenType.ARROW:
-            self.avancar(); self.parse_tipo()
+            # Consome anotação de tipo (ignorada no MVP)
+            self.avancar()
+            while self.atual().tipo not in (TokenType.LBRACE, TokenType.NEWLINE, TokenType.EOF):
+                self.avancar()
         self.consumir(TokenType.LBRACE)
         self.pular_newlines()
         corpo = []

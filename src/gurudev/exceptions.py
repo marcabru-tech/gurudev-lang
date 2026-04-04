@@ -61,12 +61,3 @@ class HermeneuticsError(GuruRuntimeError):
             suggestion="O nível hermenêutico deve estar entre 1 e 7.",
             **kwargs
         )
-
-class ResourceNotFoundError(GuruRuntimeError):
-    """Recurso não encontrado durante LOAD."""
-    def __init__(self, resource_name: str, **kwargs):
-        super().__init__(
-            message=f"Recurso não encontrado: '{resource_name}'",
-            suggestion="Verifique se o recurso foi carregado com carregar_recurso().",
-            **kwargs
-        )

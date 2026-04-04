@@ -25,7 +25,6 @@ def executar_com_nivel(codigo: str, hermeneutica: int, recursos: dict = None) ->
     for bloco in gurubyte.get("CODEBLOCKS", []):
         bloco.setdefault("CONTEXT", {})["hermeneutics"] = hermeneutica
     matrix = GuruMatrix()
-    matrix.popular_minimo()
     dvm = GuruDVM(matrix)
     if recursos:
         for k, v in recursos.items():

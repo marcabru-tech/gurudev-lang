@@ -40,7 +40,6 @@ def _executar(codigo: str, hermeneutica: int = 1) -> tuple[list, dict]:
     for bloco in gurubyte.get("CODEBLOCKS", []):
         bloco.setdefault("CONTEXT", {})["hermeneutics"] = hermeneutica
     matrix = GuruMatrix()
-    matrix.popular_minimo()
     dvm = GuruDVM(matrix)
     saidas = dvm.executar(gurubyte)
     return saidas, dvm.env

@@ -1,1 +1,0 @@
-# GuruDev CLI package
