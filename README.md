@@ -1,7 +1,7 @@
 # <p align="center">🔮 GuruDev® Language</p>
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/render?type=waving&color=auto&height=200&section=header&text=GuruDev%20Lang&fontSize=90&animation=fadeIn&fontAlignY=38" alt="GuruDev Banner" />
+  <img src="https://github.com/user-attachments/assets/c95ed760-5ddc-4807-8044-61c0bea657ed" alt="GuruDev Banner" width="100%" />
 </p>
 
 <p align="center">
